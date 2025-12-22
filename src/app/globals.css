@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0A0A0A;
+  --foreground: #ededed;
+  
+  --color-primary: #4ECDC4;
+  --color-primary-glow: rgba(78, 205, 196, 0.5);
+  
+  --color-secondary: #FF6EC7;
+  --color-secondary-glow: rgba(255, 110, 199, 0.5);
+  
+  --color-accent-purple: #9D7AFE;
+  --color-accent-blue: #6EA1DA;
+}
+
+:root {
+  --background: #0A0A0A;
+  --foreground: #ededed;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden; /* Fluid app-like feel */
+}
+
+/* The Ocean/Starry Background Animation */
+@keyframes twinkle {
+  0% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+  100% { opacity: 0.3; transform: scale(1); }
+}
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ocean-bg {
+  background-color: #0A0A0A;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(157, 122, 254, 0.08) 0%, transparent 25%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+/* Subtle stars */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 4s infinite ease-in-out;
+}
+
+/* Scrollbar hiding for that clean app look */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
