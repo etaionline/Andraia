@@ -1,290 +1,252 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { Anchor, Ship, Box, Layers, Activity, Zap, Bot, MessageCircle, Palette } from "lucide-react";
+import { Send, Settings, Type, AlignLeft, Menu, Bot, User, Sparkles } from "lucide-react";
 
 export default function Home() {
-  const [leftDockOpen, setLeftDockOpen] = useState(true);
-  const [rightDockOpen, setRightDockOpen] = useState(true);
-  const [devMode, setDevMode] = useState(false);
-  const [activeAgent, setActiveAgent] = useState('mistral');
   const [message, setMessage] = useState('');
-
-  const agents = [
+  const [chatHistory, setChatHistory] = useState([
     {
-      id: 'minimax',
-      name: 'Minimax',
-      role: 'Deep Thinker',
-      color: 'purple',
-      icon: Bot,
-      description: 'Analytical reasoning and complex problem solving'
+      id: 1,
+      sender: 'ai',
+      text: 'Hello! I\'m AndrAIa, your fluid AI chat assistant. I can help you with creative tasks, analysis, problem-solving, and much more. What would you like to explore today?',
+      timestamp: '2:45 PM'
     },
     {
-      id: 'mistral',
-      name: 'Mistral',
-      role: 'Creative Generalist',
-      color: 'teal',
-      icon: Palette,
-      description: 'Creative solutions and flexible thinking'
+      id: 2,
+      sender: 'user', 
+      text: 'Can you help me brainstorm ideas for a new app?',
+      timestamp: '2:47 PM'
     },
     {
-      id: 'gpt4o',
-      name: 'GPT-4o',
-      role: 'Rational Journalist',
-      color: 'blue',
-      icon: MessageCircle,
-      description: 'Clear communication and structured analysis'
-    },
-    {
-      id: 'grok',
-      name: 'Grok',
-      role: 'Deep Creator',
-      color: 'pink',
-      icon: Zap,
-      description: 'Innovative ideation and artistic expression'
+      id: 3,
+      sender: 'ai',
+      text: 'Absolutely! I\'d love to help you brainstorm app ideas. What problem are you trying to solve, or what industry/area interests you most? Let\'s explore some innovative concepts together.',
+      timestamp: '2:47 PM'
     }
-  ];
-
-  const getAgentStyles = (agentId: string, isActive: boolean) => {
-    const baseStyles = "agent-card p-4 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden";
-    const activeStyles = isActive ? "active border-2 shadow-xl" : "border border-teal-100 hover:border-teal-300";
-    
-    const colorStyles = {
-      minimax: isActive ? "border-purple-500 bg-purple-50" : "",
-      mistral: isActive ? "border-teal-500 bg-teal-50" : "",
-      gpt4o: isActive ? "border-blue-500 bg-blue-50" : "",
-      grok: isActive ? "border-pink-500 bg-pink-50" : ""
-    };
-    
-    return `${baseStyles} ${activeStyles} ${colorStyles[agentId as keyof typeof colorStyles]}`;
-  };
-
-  const getAgentIconColor = (agentId: string, isActive: boolean) => {
-    if (!isActive) return "text-gray-400";
-    
-    const colors = {
-      minimax: "text-purple-600",
-      mistral: "text-teal-600", 
-      gpt4o: "text-blue-600",
-      grok: "text-pink-600"
-    };
-    
-    return colors[agentId as keyof typeof colors] || "text-gray-400";
-  };
+  ]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      console.log(`Sending message to ${activeAgent}: ${message}`);
+      const newMessage = {
+        id: chatHistory.length + 1,
+        sender: 'user',
+        text: message,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      setChatHistory([...chatHistory, newMessage]);
       setMessage('');
+      
+      // Simulate AI response
+      setTimeout(() => {
+        const aiResponse = {
+          id: chatHistory.length + 2,
+          sender: 'ai',
+          text: 'That\'s a fascinating idea! Let me help you develop that concept further. Here are some considerations and potential enhancements...',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setChatHistory(prev => [...prev, aiResponse]);
+      }, 1500);
     }
   };
 
   return (
     <Suspense fallback={
-      <div className="h-screen w-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">Loading AndrAIa OS...</div>
+      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-white text-xl font-medium">Loading AndrAIa...</div>
       </div>
     }>
-      <main className="h-screen w-screen overflow-hidden flex flex-col relative text-white">
-        {/* Enhanced Ocean Background */}
-        <div className="ocean-bg">
-          {Array.from({ length: 30 }).map((_, i) => (
+      <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 20 }).map((_, i) => (
             <div 
               key={i}
-              className="star absolute rounded-full bg-white"
+              className="absolute rounded-full bg-gradient-to-r from-purple-400/20 to-cyan-400/20 animate-pulse"
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 3 + 1}px`,
-                height: `${Math.random() * 3 + 1}px`,
-                animationDelay: `${Math.random() * 5}s`,
-                opacity: Math.random() * 0.5 + 0.1
+                width: `${Math.random() * 4 + 2}px`,
+                height: `${Math.random() * 4 + 2}px`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${Math.random() * 2 + 2}s`
               }}
             />
           ))}
         </div>
 
-        {/* Modern Header */}
-        <header className="h-16 w-full flex items-center justify-between px-6 z-10 border-b border-teal-200/20 bg-white/10 backdrop-blur-xl">
+        {/* Header */}
+        <header className="h-16 w-full flex items-center justify-between px-6 z-10 bg-black/20 backdrop-blur-xl border-b border-purple-500/30">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600">
-              <Ship size={20} className="text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 shadow-lg shadow-purple-500/50">
+              <Sparkles size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-wide">AndrAIa OS</h1>
-              <p className="text-xs text-teal-200">Fluid AI Orchestration</p>
+              <h1 className="text-xl font-bold text-white tracking-wide">AndrAIa</h1>
+              <p className="text-xs text-purple-300">Fluid AI Chat Assistant</p>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="status-indicator">
-              <div className="status-dot"></div>
-              <span>ZEUS ENGINE: ACTIVE</span>
+            <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
+              <Settings size={18} className="text-white/70" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-sm text-white/70 font-medium">Online</span>
             </div>
-            <span className="text-sm text-white/60 font-mono">v1.0</span>
           </div>
         </header>
 
-        {/* Main Workspace */}
-        <div className="flex-1 flex p-4 gap-4 overflow-hidden">
-          
-          {/* LEFT DOCK - Harbour */}
-          {leftDockOpen && (
-            <div className="glass-panel w-72 h-full flex-shrink-0 transition-all duration-300 p-6">
-              <div className="glass-panel-title text-gray-800">Harbour</div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-teal-50 hover:bg-teal-100 transition-colors text-sm text-gray-700 hover:text-teal-700">
-                    <Anchor size={18} className="text-teal-600" />
-                    <span className="font-medium">Global Assets</span>
-                  </button>
-                  <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-sm text-gray-600">
-                    <Box size={18} />
-                    <span>Archives</span>
-                  </button>
-                  <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-sm text-gray-600">
-                    <Layers size={18} />
-                    <span>Agora Feed</span>
-                  </button>
-                </div>
-                
-                <div className="h-px bg-gradient-to-r from-transparent via-teal-200 to-transparent my-4" />
-                
-                <div className="p-4 rounded-xl border border-teal-100 bg-gradient-to-br from-teal-50 to-blue-50">
-                  <p className="text-xs text-gray-600 mb-3 font-medium uppercase tracking-wider">Storage Capacity</p>
-                  <div className="w-full h-2 bg-white rounded-full overflow-hidden">
-                    <div className="w-[68%] h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all duration-500"></div>
+        {/* Main Chat Interface */}
+        <div className="flex-1 flex">
+          {/* Chat Stream - Left Panel */}
+          <div className="flex-1 flex flex-col h-full">
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+              {chatHistory.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`flex gap-3 max-w-[70%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    {/* Avatar */}
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      msg.sender === 'ai' 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/50' 
+                        : 'bg-gradient-to-r from-cyan-500 to-teal-500 shadow-lg shadow-cyan-500/50'
+                    }`}>
+                      {msg.sender === 'ai' ? (
+                        <Bot size={18} className="text-white" />
+                      ) : (
+                        <User size={18} className="text-white" />
+                      )}
+                    </div>
+                    
+                    {/* Message Bubble */}
+                    <div className={`relative p-4 rounded-2xl backdrop-blur-sm border ${
+                      msg.sender === 'ai'
+                        ? 'bg-purple-900/40 border-purple-500/50 shadow-lg shadow-purple-500/20'
+                        : 'bg-cyan-900/40 border-cyan-500/50 shadow-lg shadow-cyan-500/20'
+                    }`}>
+                      <div className={`absolute top-3 w-3 h-3 transform rotate-45 ${
+                        msg.sender === 'ai'
+                          ? 'bg-purple-500/50 border-l border-t border-purple-500/50 -left-1.5'
+                          : 'bg-cyan-500/50 border-r border-b border-cyan-500/50 -right-1.5'
+                      }`}></div>
+                      
+                      <p className="text-white leading-relaxed mb-2">{msg.text}</p>
+                      <p className="text-xs text-white/50">{msg.timestamp}</p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">6.8GB of 10GB used</p>
                 </div>
-              </div>
+              ))}
             </div>
-          )}
 
-          {/* CENTER - BlackBoard with Enhanced Chat */}
-          <div className="glass-panel flex-1 h-full relative shadow-2xl">
-            <div className="blackboard-canvas absolute inset-0 p-6">
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-teal-500 to-teal-600 flex items-center justify-center">
-                    <Palette size={32} className="text-white" />
+            {/* Input Area */}
+            <div className="p-6 bg-black/20 backdrop-blur-xl border-t border-purple-500/30">
+              <div className="flex items-end gap-3">
+                {/* Rich Text Input */}
+                <div className="flex-1 relative">
+                  <div className="flex items-center gap-2 p-3 bg-black/40 backdrop-blur-sm border border-purple-500/30 rounded-2xl focus-within:border-purple-400/50 transition-colors">
+                    <input
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      placeholder="Type your message... (Rich text supported)"
+                      className="flex-1 bg-transparent text-white placeholder-white/50 outline-none resize-none"
+                      style={{ minHeight: '44px' }}
+                    />
+                    
+                    {/* Formatting Icons */}
+                    <div className="flex items-center gap-1">
+                      <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <Type size={16} className="text-orange-400 group-hover:text-orange-300" />
+                      </button>
+                      <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <AlignLeft size={16} className="text-orange-400 group-hover:text-orange-300" />
+                      </button>
+                      <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <Menu size={16} className="text-orange-400 group-hover:text-orange-300" />
+                      </button>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">BlackBoard Canvas</h3>
-                  <p className="text-gray-600">Interactive workspace for drag-and-drop collaboration</p>
                 </div>
+
+                {/* Send Button */}
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!message.trim()}
+                  className="p-4 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-500/50"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
               </div>
             </div>
-            
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[700px] max-w-full px-4 z-30">
-              <div className="chat-container p-6">
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Select AI Agent</h4>
-                  <div className="grid grid-cols-4 gap-3">
-                    {agents.map((agent) => {
-                      const Icon = agent.icon;
-                      const isActive = activeAgent === agent.id;
-                      return (
-                        <div 
-                          key={agent.id}
-                          className={getAgentStyles(agent.id, isActive)}
-                          onClick={() => setActiveAgent(agent.id)}
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <Icon size={16} className={getAgentIconColor(agent.id, isActive)} />
-                            <span className="text-sm font-medium text-gray-800">{agent.name}</span>
-                          </div>
-                          <p className="text-xs text-gray-600 mb-1">{agent.role}</p>
-                          <p className="text-xs text-gray-500">{agent.description}</p>
-                        </div>
-                      );
-                    })}
+          </div>
+
+          {/* Insights Panel - Right Sidebar */}
+          <div className="w-80 h-full bg-black/20 backdrop-blur-xl border-l border-purple-500/30 p-6">
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-white mb-2">Collected Insights</h3>
+              <p className="text-sm text-white/60">Real-time conversation analysis</p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Conversation Stats */}
+              <div className="p-4 bg-gradient-to-br from-purple-900/40 to-pink-900/40 rounded-xl border border-purple-500/30">
+                <h4 className="text-sm font-medium text-white mb-2">Session Stats</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-xs text-white/70">Messages</span>
+                    <span className="text-xs text-purple-300 font-mono">{chatHistory.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-white/70">Duration</span>
+                    <span className="text-xs text-purple-300 font-mono">5m 23s</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-white/70">Tokens Used</span>
+                    <span className="text-xs text-purple-300 font-mono">1,247</span>
                   </div>
                 </div>
-                
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder={`Message ${agents.find(a => a.id === activeAgent)?.name}...`}
-                    className="chat-input flex-1"
-                  />
-                  <button 
-                    onClick={handleSendMessage}
-                    className="btn-primary"
-                  >
-                    Send
+              </div>
+
+              {/* AI Suggestions */}
+              <div className="p-4 bg-gradient-to-br from-cyan-900/40 to-teal-900/40 rounded-xl border border-cyan-500/30">
+                <h4 className="text-sm font-medium text-white mb-2">AI Suggestions</h4>
+                <div className="space-y-2">
+                  <button className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                    <p className="text-xs text-white/80">Ask about market research</p>
+                  </button>
+                  <button className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                    <p className="text-xs text-white/80">Generate user personas</p>
+                  </button>
+                  <button className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                    <p className="text-xs text-white/80">Create wireframes</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="p-4 bg-gradient-to-br from-orange-900/40 to-red-900/40 rounded-xl border border-orange-500/30">
+                <h4 className="text-sm font-medium text-white mb-2">Quick Actions</h4>
+                <div className="space-y-2">
+                  <button className="w-full p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-left">
+                    <p className="text-xs text-white/80">Export conversation</p>
+                  </button>
+                  <button className="w-full p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-left">
+                    <p className="text-xs text-white/80">Share insights</p>
+                  </button>
+                  <button className="w-full p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-left">
+                    <p className="text-xs text-white/80">New chat session</p>
                   </button>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* RIGHT DOCK - The Ship */}
-          {rightDockOpen && (
-            <div className="glass-panel w-80 h-full flex-shrink-0">
-              <div className="p-6">
-                <div className="glass-panel-title text-gray-800">The Ship</div>
-                
-                <div className="space-y-3 mb-6">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">Active Projects</p>
-                  
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="crate-item">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Box size={16} className="crate-icon text-teal-600" />
-                          <span className="text-sm font-medium text-gray-800">Project Alpha</span>
-                        </div>
-                        <span className="text-xs text-gray-400">12m ago</span>
-                      </div>
-                      <div className="flex gap-1 pl-6">
-                        <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="w-3/4 h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
-                        </div>
-                        <div className="w-1/2 h-1 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="w-1/2 h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-4 rounded-xl border border-teal-100 bg-gradient-to-br from-teal-50 to-blue-50">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Control Panel</span>
-                    <button 
-                      onClick={() => setDevMode(!devMode)}
-                      className={`dev-toggle ${devMode ? 'active' : ''}`}
-                    >
-                      {devMode ? 'DEV' : 'USER'}
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">Temperature</span>
-                      <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="w-1/3 h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">Tokens Used</span>
-                      <span className="text-xs font-mono text-gray-800">1,247</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">Cost Today</span>
-                      <span className="text-xs font-mono text-teal-600">$2.34</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </main>
     </Suspense>
