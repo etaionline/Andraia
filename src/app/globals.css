@@ -3,32 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #ededed;
+  --brand-teal: #00C0A3;
+  --brand-dark: #111213;
+  --brand-glass: rgba(28, 30, 32, 0.7);
+  --brand-glass-light: rgba(255, 255, 255, 0.1);
+  --brand-border: rgba(255, 255, 255, 0.2);
   
   --color-primary: #4ECDC4;
   --color-primary-glow: rgba(78, 205, 196, 0.5);
-  
   --color-secondary: #FF6EC7;
-  --color-secondary-glow: rgba(255, 110, 199, 0.5);
-  
   --color-accent-purple: #9D7AFE;
   --color-accent-blue: #6EA1DA;
 }
 
-:root {
-  --background: #0A0A0A;
-  --foreground: #ededed;
-}
-
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  overflow: hidden; /* Fluid app-like feel */
+  background-color: var(--brand-dark);
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
 }
 
-/* The Ocean/Starry Background Animation */
+/* Ocean Background Animation */
 @keyframes twinkle {
   0% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 0.8; transform: scale(1.2); }
@@ -42,10 +37,7 @@ body {
 }
 
 .ocean-bg {
-  background-color: #0A0A0A;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(157, 122, 254, 0.08) 0%, transparent 25%);
+  background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 50%, #0A0A0A 100%);
   position: fixed;
   top: 0;
   left: 0;
@@ -54,7 +46,6 @@ body {
   z-index: -1;
 }
 
-/* Subtle stars */
 .star {
   position: absolute;
   background: white;
@@ -62,11 +53,213 @@ body {
   animation: twinkle 4s infinite ease-in-out;
 }
 
-/* Scrollbar hiding for that clean app look */
+/* Glass Panel System */
+.glass-panel {
+  background: var(--brand-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--brand-border);
+  border-radius: 24px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand-teal);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 192, 163, 0.1);
+  border: 1px solid rgba(0, 192, 163, 0.3);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-teal);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--brand-teal);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Agent Cards */
+.agent-card {
+  background: var(--brand-glass-light);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--brand-border);
+  transition: all 0.3s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 192, 163, 0.2);
+}
+
+.agent-card.active {
+  background: rgba(0, 192, 163, 0.15);
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 20px rgba(0, 192, 163, 0.3);
+}
+
+/* Chat Container */
+.chat-container {
+  background: var(--brand-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--brand-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.chat-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 3px rgba(0, 192, 163, 0.1);
+}
+
+.chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-teal) 0%, #00a893 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 192, 163, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 192, 163, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Crate Items */
+.crate-item {
+  background: var(--brand-glass-light);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.crate-item:hover {
+  background: rgba(0, 192, 163, 0.1);
+  border-color: var(--brand-teal);
+}
+
+/* Dev Toggle */
+.dev-toggle {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--brand-border);
+  background: var(--brand-glass-light);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dev-toggle.active {
+  background: rgba(0, 192, 163, 0.2);
+  border-color: var(--brand-teal);
+  color: var(--brand-teal);
+}
+
+/* BlackBoard Canvas */
+.blackboard-canvas {
+  background: linear-gradient(135deg, 
+    rgba(28, 30, 32, 0.8) 0%, 
+    rgba(20, 22, 24, 0.9) 50%, 
+    rgba(28, 30, 32, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--brand-border);
+  border-radius: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .glass-panel {
+    border-radius: 16px;
+  }
+  
+  .chat-container {
+    padding: 16px;
+  }
+  
+  .agent-card {
+    padding: 12px;
+  }
+}
+
+/* Scrollbar hiding */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Custom scrollbar for containers that need it */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--brand-teal);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00a893;
 }
