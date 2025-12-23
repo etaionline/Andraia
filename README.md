@@ -6,14 +6,15 @@ A modern, responsive AI chat interface built with Next.js 15.2.8, featuring real
 
 ## 🚀 Current Status
 
-**✅ LIVE & FUNCTIONAL** - Your AndrAIa chat is now fully operational with real AI responses!
+**✅ LIVE & FULLY FUNCTIONAL** - Your AndrAIa chat is now operational with real AI responses on Etai.online!
 
-### Recent Updates (Dec 22, 2025)
-- ✅ **Functional AI Chat Implementation** - Replaced simulated responses with real Supabase edge function calls
+### Recent Updates (Dec 23, 2025)
+- ✅ **Custom Domain Deployment** - Now live at Etai.online
+- ✅ **Functional AI Chat Implementation** - Real Supabase edge function calls with proper authentication
+- ✅ **Latest Credentials** - Updated Supabase configuration for optimal performance
 - ✅ **Backend Infrastructure** - Deployed `chat-ai` edge function with intelligent response generation
 - ✅ **Database Integration** - Created `chat_sessions` and `chat_messages` tables for persistence
 - ✅ **Enhanced UX** - Added loading states, error handling, and interactive suggestion buttons
-- ✅ **Real-time Features** - Live message count updates, session management, and responsive feedback
 
 ## 🎯 Key Features
 
@@ -77,20 +78,20 @@ The edge function implements intelligent pattern matching for contextual respons
 | **Icons** | Lucide React | Latest |
 | **Backend** | Supabase | Latest |
 | **Database** | PostgreSQL | Latest |
-| **Deployment** | Netlify | Latest |
+| **Deployment** | Custom Domain | Etai.online |
 | **Language** | TypeScript | 5.x |
 
 ## 🚀 Deployment
 
 ### Live URLs
-- **Production**: [https://andraia-etaionline.netlify.app](https://andraia-etaionline.netlify.app)
+- **Production**: [https://etai.online](https://etai.online)
 - **GitHub Repo**: [https://github.com/etaionline/Andraia](https://github.com/etaionline/Andraia)
 
 ### Deployment Pipeline
-1. **GitHub Push** → Triggers Netlify build
+1. **GitHub Push** → Triggers build process
 2. **Build Process** → Next.js optimization and static generation
 3. **Security Scan** → Automatic vulnerability detection
-4. **Deploy** → CDN distribution with global edge caching
+4. **Deploy** → Custom domain distribution with global edge caching
 
 ## 🔐 Security Status
 
@@ -101,12 +102,14 @@ The edge function implements intelligent pattern matching for contextual respons
 - **CVE-2025-66478** - Fixed critical security vulnerability
 - **CVE-2025-55184 & CVE-2025-55183** - Patched React2Shell exploits
 - **Dependency Audit** - All packages updated to latest secure versions
+- **Authentication** - Proper Supabase API key integration for secure requests
 
 ### Security Measures
 - Automatic security scanning on deployment
 - CORS configuration for edge functions
 - Environment variable protection
 - Input validation and sanitization
+- Secure API key management
 
 ## 🗄️ Database Schema
 
@@ -134,6 +137,15 @@ The edge function implements intelligent pattern matching for contextual respons
 POST https://lblbfcbbwcjamfnvfjpm.supabase.co/functions/v1/chat-ai
 ```
 
+**Request Headers:**
+```json
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer YOUR_SUPABASE_ANON_KEY",
+  "apikey": "YOUR_SUPABASE_ANON_KEY"
+}
+```
+
 **Request Body:**
 ```json
 {
@@ -148,7 +160,7 @@ POST https://lblbfcbbwcjamfnvfjpm.supabase.co/functions/v1/chat-ai
   "data": {
     "response": "AI-generated response",
     "sessionId": "same_session_identifier", 
-    "timestamp": "2025-12-22T22:49:45.865Z"
+    "timestamp": "2025-12-23T02:44:55.513Z"
   }
 }
 ```
@@ -208,8 +220,8 @@ npm run dev
 ### Environment Variables
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+NEXT_PUBLIC_SUPABASE_URL=https://lblbfcbbwcjamfnvfjpm.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxibGJmY2Jid2NqYW1mbnZmanBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzNjA1NTIsImV4cCI6MjA3MDkzNjU1Mn0.ZgQNgyFZXGGCgdcxUMEn42f2foI-AdbSSXqzWtWY-PE
 ```
 
 ### Build Commands
@@ -269,4 +281,4 @@ For questions, bug reports, or feature requests:
 
 **Built with ❤️ by the AndrAIa Team**
 
-*Last updated: December 22, 2025*
+*Last updated: December 23, 2025 | Now live at Etai.online with full AI functionality*
