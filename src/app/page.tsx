@@ -3,9 +3,9 @@
 import { useState, Suspense } from "react";
 import { Send, Settings, Type, AlignLeft, Menu, Bot, User, Sparkles, Loader2, AlertCircle } from "lucide-react";
 
-// Supabase configuration
+// Updated Supabase configuration with latest credentials
 const SUPABASE_URL = 'https://lblbfcbbwcjamfnvfjpm.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxibGZiY2Jid2NhbWZudmZqcG0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNTU4Mzg5NCwiZXhwIjoyMDUxMTU5ODk0fQ.KE9KqVvUjJ4zO6w8gX7r0l8K1L9M2v4N6t5y2e4oI8';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxibGJmY2Jid2NqYW1mbnZmanBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzNjA1NTIsImV4cCI6MjA3MDkzNjU1Mn0.ZgQNgyFZXGGCgdcxUMEn42f2foI-AdbSSXqzWtWY-PE';
 
 export default function Home() {
   const [message, setMessage] = useState('');
