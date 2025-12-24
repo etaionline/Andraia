@@ -99,17 +99,17 @@ export default function Home() {
 
   return (
     <Suspense fallback={
-      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600">
         <div className="text-white text-xl font-medium">Loading AndrAIa...</div>
       </div>
     }>
-      <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 relative">
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {Array.from({ length: 20 }).map((_, i) => (
             <div 
               key={i}
-              className="absolute rounded-full bg-gradient-to-r from-purple-400/20 to-cyan-400/20 animate-pulse"
+              className="absolute rounded-full bg-gradient-to-r from-orange-300/30 via-pink-300/30 to-purple-300/30 animate-pulse"
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
@@ -123,7 +123,7 @@ export default function Home() {
         </div>
 
         {/* Header */}
-        <header className="h-16 w-full flex items-center justify-between px-6 z-10 bg-black/20 backdrop-blur-xl border-b border-purple-500/30">
+        <header className="h-16 w-full flex items-center justify-between px-6 z-10 bg-black/30 backdrop-blur-xl border-b border-white/20">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 shadow-lg shadow-purple-500/50">
               <Sparkles size={20} className="text-white" />
@@ -218,11 +218,11 @@ export default function Home() {
             )}
 
             {/* Input Area */}
-            <div className="p-6 bg-black/20 backdrop-blur-xl border-t border-purple-500/30">
+            <div className="p-6 bg-black/30 backdrop-blur-xl border-t border-white/20">
               <div className="flex items-end gap-3">
                 {/* Rich Text Input */}
                 <div className="flex-1 relative">
-                  <div className="flex items-center gap-2 p-3 bg-black/40 backdrop-blur-sm border border-purple-500/30 rounded-2xl focus-within:border-purple-400/50 transition-colors">
+                  <div className="flex items-center gap-2 p-3 bg-black/50 backdrop-blur-sm border border-white/30 rounded-2xl focus-within:border-orange-400/70 transition-colors">
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
@@ -266,7 +266,7 @@ export default function Home() {
           </div>
 
           {/* Insights Panel - Right Sidebar */}
-          <div className="w-80 h-full bg-black/20 backdrop-blur-xl border-l border-purple-500/30 p-6">
+          <div className="w-80 h-full bg-black/30 backdrop-blur-xl border-l border-white/20 p-6">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-white mb-2">Collected Insights</h3>
               <p className="text-sm text-white/60">Real-time conversation analysis</p>
