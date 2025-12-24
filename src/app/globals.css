@@ -37,7 +37,10 @@ body {
 }
 
 .ocean-bg {
-  background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 50%, #0A0A0A 100%);
+  background-image: url('/uploads/Background%20-Mistral.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: fixed;
   top: 0;
   left: 0;
