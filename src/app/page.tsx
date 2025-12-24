@@ -103,7 +103,15 @@ export default function Home() {
         <div className="text-white text-xl font-medium">Loading AndrAIa...</div>
       </div>
     }>
-      <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      <main className="h-screen w-screen overflow-hidden relative" style={{
+        backgroundImage: 'url(/background-mistral.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {Array.from({ length: 20 }).map((_, i) => (
