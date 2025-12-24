@@ -146,9 +146,9 @@ export default function Home() {
         </header>
 
         {/* Main Chat Interface */}
-        <div className="flex-1 flex">
+        <div className="flex h-[calc(100vh-4rem)]">
           {/* Chat Stream - Left Panel */}
-          <div className="flex-1 flex flex-col h-full">
+          <div className="flex-1 flex flex-col">
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {chatHistory.map((msg) => (
@@ -218,7 +218,7 @@ export default function Home() {
             )}
 
             {/* Input Area */}
-            <div className="p-6 bg-black/20 backdrop-blur-xl border-t border-purple-500/30">
+            <div className="flex-shrink-0 p-6 bg-black/20 backdrop-blur-xl border-t border-purple-500/30">
               <div className="flex items-end gap-3">
                 {/* Rich Text Input */}
                 <div className="flex-1 relative">
@@ -266,7 +266,7 @@ export default function Home() {
           </div>
 
           {/* Insights Panel - Right Sidebar */}
-          <div className="w-80 h-full bg-black/20 backdrop-blur-xl border-l border-purple-500/30 p-6">
+          <div className="w-80 bg-black/20 backdrop-blur-xl border-l border-purple-500/30 p-6 overflow-y-auto">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-white mb-2">Collected Insights</h3>
               <p className="text-sm text-white/60">Real-time conversation analysis</p>
