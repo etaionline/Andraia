@@ -1,225 +1,190 @@
-"use client";
-
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Box, Clock, GitBranch, FileText, Image, Code, MoreHorizontal } from "lucide-react";
-
-interface CrateFile {
-  id: string;
-  name: string;
-  type: "text" | "image" | "code" | "conversation";
-  size: string;
-  lastModified: Date;
-  version: number;
-  clustered?: boolean;
-}
+import { useState } from "react";
+import { Box, Clock, Star, MoreVertical, Archive, Download, Share } from "lucide-react";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 interface Crate {
   id: string;
   name: string;
-  files: CrateFile[];
-  color: "teal" | "purple" | "blue" | "pink";
-  lastAccessed: Date;
+  lastModified: Date;
+  size: string;
+  items: number;
+  starred: boolean;
+  type: "project" | "archive" | "template";
+  color: string;
 }
 
-interface CrateSystemProps {
-  className?: string;
-}
+interface CrateSystemProps {}
 
-export function CrateSystem({ className }: CrateSystemProps) {
+export function CrateSystem({}: CrateSystemProps) {
   const [crates, setCrates] = useState<Crate[]>([
     {
-      id: "crate-1",
-      name: "Project Alpha",
-      color: "teal",
-      lastAccessed: new Date(),
-      files: [
-        {
-          id: "file-1",
-          name: "conversation-01.md",
-          type: "conversation",
-          size: "2.4 KB",
-          lastModified: new Date(),
-          version: 3,
-          clustered: true
-        },
-        {
-          id: "file-2", 
-          name: "design-mockup.png",
-          type: "image",
-          size: "156 KB",
-          lastModified: new Date(),
-          version: 1
-        }
-      ]
+      id: "1",
+      name: "AI Research Project",
+      lastModified: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
+      size: "2.4 MB",
+      items: 15,
+      starred: true,
+      type: "project",
+      color: "teal"
     },
     {
-      id: "crate-2",
-      name: "Research Notes",
-      color: "purple",
-      lastAccessed: new Date(Date.now() - 3600000),
-      files: [
-        {
-          id: "file-3",
-          name: "ai-models.md",
-          type: "text",
-          size: "8.1 KB", 
-          lastModified: new Date(),
-          version: 2
-        }
-      ]
+      id: "2", 
+      name: "Ocean UI Components",
+      lastModified: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
+      size: "1.8 MB",
+      items: 8,
+      starred: false,
+      type: "template",
+      color: "purple"
+    },
+    {
+      id: "3",
+      name: "Zeus Engine Logs",
+      lastModified: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+      size: "856 KB",
+      items: 23,
+      starred: false,
+      type: "archive",
+      color: "blue"
     }
   ]);
 
-  const [expandedCrate, setExpandedCrate] = useState<string | null>(null);
+  const [selectedCrate, setSelectedCrate] = useState<string | null>(null);
 
-  const getFileIcon = (type: CrateFile["type"]) => {
+  const formatTimeAgo = (date: Date) => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d ago`;
+  };
+
+  const getTypeIcon = (type: Crate["type"]) => {
     switch (type) {
-      case "text": return <FileText size={12} />;
-      case "image": return <Image size={12} />;
-      case "code": return <Code size={12} />;
-      case "conversation": return <GitBranch size={12} />;
-      default: return <FileText size={12} />;
+      case "project": return "🚀";
+      case "template": return "📋";
+      case "archive": return "📦";
+      default: return "📁";
     }
   };
 
-  const getColorClasses = (color: Crate["color"]) => {
-    switch (color) {
-      case "teal": return "border-teal-500/30 bg-teal-500/5 hover:border-teal-500/50";
-      case "purple": return "border-purple-500/30 bg-purple-500/5 hover:border-purple-500/50";
-      case "blue": return "border-blue-500/30 bg-blue-500/5 hover:border-blue-500/50";
-      case "pink": return "border-pink-500/30 bg-pink-500/5 hover:border-pink-500/50";
+  const getTypeColor = (type: Crate["type"]) => {
+    switch (type) {
+      case "project": return "text-teal-400";
+      case "template": return "text-purple-400";
+      case "archive": return "text-blue-400";
+      default: return "text-white/60";
     }
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className="space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-white/40 uppercase tracking-wider">Active Crates</p>
-        <button className="text-xs text-white/40 hover:text-white/60 transition-colors">
-          <MoreHorizontal size={14} />
+        <div className="flex items-center gap-2">
+          <Box size={14} className="text-teal-400" />
+          <span className="text-xs font-bold text-white/80">KRONOSAVE</span>
+        </div>
+        <button className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/60 transition-colors">
+          <MoreVertical size={12} />
         </button>
       </div>
 
-      <AnimatePresence>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 gap-2 p-3 rounded-lg bg-black/20 border border-white/5">
+        <div className="text-center">
+          <div className="text-lg font-bold text-teal-400">{crates.length}</div>
+          <div className="text-[10px] text-white/40">Active Crates</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-bold text-rose-400">46</div>
+          <div className="text-[10px] text-white/40">Total Items</div>
+        </div>
+      </div>
+
+      {/* Crates List */}
+      <div className="space-y-2">
         {crates.map((crate) => (
-          <motion.div
+          <div
             key={crate.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className={cn(
-              "group rounded-lg border transition-all cursor-pointer",
-              getColorClasses(crate.color)
-            )}
+            className={`group p-3 rounded-lg border cursor-pointer transition-all ${
+              selectedCrate === crate.id
+                ? "bg-teal-500/10 border-teal-500/30"
+                : "bg-white/5 border-white/5 hover:border-teal-500/20 hover:bg-white/10"
+            }`}
+            onClick={() => setSelectedCrate(selectedCrate === crate.id ? null : crate.id)}
           >
-            {/* Crate Header */}
-            <div 
-              className="p-3"
-              onClick={() => setExpandedCrate(
-                expandedCrate === crate.id ? null : crate.id
-              )}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Box size={14} className={`text-${crate.color}-400`} />
-                  <span className="text-sm font-medium text-white/80">
-                    {crate.name}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-white/30">
-                    {crate.files.length} files
-                  </span>
-                  <Clock size={10} className="text-white/30" />
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-sm">{getTypeIcon(crate.type)}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1">
+                    <h4 className="text-sm font-medium text-white/80 truncate">{crate.name}</h4>
+                    {crate.starred && <Star size={10} className="text-yellow-400 fill-current" />}
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-white/40 mt-0.5">
+                    <span className={getTypeColor(crate.type)}>{crate.type.toUpperCase()}</span>
+                    <span>•</span>
+                    <span>{crate.items} items</span>
+                    <span>•</span>
+                    <span>{crate.size}</span>
+                  </div>
                 </div>
               </div>
-
-              {/* File Preview Bars */}
-              <div className="flex gap-1 pl-6">
-                {crate.files.slice(0, 3).map((file, i) => (
-                  <div 
-                    key={file.id}
-                    className={cn(
-                      "h-1 rounded-full bg-white/10",
-                      i === 0 ? "w-8" : i === 1 ? "w-6" : "w-4"
-                    )}
-                  />
-                ))}
-                {crate.files.length > 3 && (
-                  <div className="w-2 h-1 bg-white/5 rounded-full" />
-                )}
+              
+              <div className="flex items-center gap-1 ml-2">
+                <span className="text-[10px] text-white/30">{formatTimeAgo(crate.lastModified)}</span>
+                <button className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-white/10 transition-all">
+                  <MoreVertical size={10} className="text-white/40" />
+                </button>
               </div>
             </div>
 
-            {/* Expanded File List */}
-            <AnimatePresence>
-              {expandedCrate === crate.id && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="border-t border-white/10 overflow-hidden"
-                >
-                  <div className="p-3 space-y-2">
-                    {crate.files.map((file) => (
-                      <div 
-                        key={file.id}
-                        className="flex items-center justify-between p-2 rounded hover:bg-white/5 transition-colors group/file"
-                        draggable
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("text/plain", JSON.stringify(file));
-                        }}
-                      >
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <div className="text-white/40">
-                            {getFileIcon(file.type)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs text-white/70 truncate">
-                              {file.name}
-                            </div>
-                            <div className="text-[10px] text-white/40 flex items-center gap-2">
-                              <span>{file.size}</span>
-                              {file.clustered && (
-                                <span className="text-teal-400">clustered</span>
-                              )}
-                              <span>v{file.version}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="opacity-0 group-hover/file:opacity-100 transition-opacity">
-                          <button className="p-1 hover:bg-white/10 rounded">
-                            <MoreHorizontal size={10} className="text-white/40" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            {/* Expanded Details */}
+            {selectedCrate === crate.id && (
+              <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
+                <div className="flex items-center justify-between text-[10px] text-white/50">
+                  <span>Last modified:</span>
+                  <span>{crate.lastModified.toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-white/50">
+                  <span>Created:</span>
+                  <span>{new Date(crate.lastModified.getTime() - 86400000).toLocaleDateString()}</span>
+                </div>
+                
+                <div className="flex items-center gap-1 pt-2">
+                  <button className="flex items-center gap-1 px-2 py-1 rounded bg-teal-500/20 hover:bg-teal-500/30 text-teal-400 text-[10px] transition-colors">
+                    <Archive size={10} />
+                    <span>Archive</span>
+                  </button>
+                  <button className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-white/60 text-[10px] transition-colors">
+                    <Download size={10} />
+                    <span>Export</span>
+                  </button>
+                  <button className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-white/60 text-[10px] transition-colors">
+                    <Share size={10} />
+                    <span>Share</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         ))}
-      </AnimatePresence>
+      </div>
 
-      {/* Chronoshard Timeline */}
-      <div className="mt-4 p-3 rounded border border-white/5 bg-black/20">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-white/40 uppercase tracking-wider">
-            Chronoshard
-          </span>
-          <Clock size={12} className="text-white/30" />
+      {/* Quick Actions */}
+      <div className="p-3 rounded-lg bg-black/20 border border-white/5">
+        <div className="flex items-center gap-2 mb-2">
+          <Clock size={12} className="text-white/40" />
+          <span className="text-[10px] text-white/60 font-medium">RECENT ACTIVITY</span>
         </div>
-        <div className="relative">
-          <div className="w-full h-1 bg-white/10 rounded-full">
-            <div className="w-[75%] h-full bg-gradient-to-r from-teal-500/50 to-purple-500/50 rounded-full" />
-          </div>
-          <div className="flex justify-between mt-1 text-[10px] text-white/30">
-            <span>Past</span>
-            <span>Present</span>
-          </div>
+        <div className="space-y-1">
+          <div className="text-[10px] text-white/50">• Updated AI Research Project</div>
+          <div className="text-[10px] text-white/50">• Created Ocean UI Components</div>
+          <div className="text-[10px] text-white/50">• Exported Zeus Engine Logs</div>
         </div>
       </div>
     </div>

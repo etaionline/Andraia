@@ -1,18 +1,16 @@
-"use client";
+import { useState } from "react";
+import { Move, Plus, Save, Share, Layers } from "lucide-react";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Clock, GitBranch, Layers, X } from "lucide-react";
-
-interface CanvasElement {
+interface CanvasItem {
   id: string;
-  type: "message" | "file" | "note";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  type: "note" | "image" | "code" | "chat";
   content: string;
-  agent?: "minimax" | "mistral" | "gpt4o" | "grok";
-  position: { x: number; y: number };
-  timestamp: Date;
-  version: number;
+  color: string;
 }
 
 interface BlackBoardProps {
@@ -20,198 +18,160 @@ interface BlackBoardProps {
 }
 
 export function BlackBoard({ className }: BlackBoardProps) {
-  const [elements, setElements] = useState<CanvasElement[]>([]);
-  const [draggedElement, setDraggedElement] = useState<string | null>(null);
-  const [timelinePosition, setTimelinePosition] = useState(100); // 100% = latest
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<CanvasItem[]>([
+    {
+      id: "1",
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 120,
+      type: "note",
+      content: "Welcome to your digital workspace! Drag elements around and organize your thoughts.",
+      color: "teal"
+    },
+    {
+      id: "2",
+      x: 300,
+      y: 100,
+      width: 180,
+      height: 100,
+      type: "code",
+      content: "const agent = new Minimax({\n  temperature: 0.7,\n  capabilities: ['reasoning']\n});",
+      color: "purple"
+    }
+  ]);
 
-  const agentColors = {
-    minimax: "border-purple-500/50 bg-purple-500/10",
-    mistral: "border-teal-500/50 bg-teal-500/10", 
-    gpt4o: "border-blue-500/50 bg-blue-500/10",
-    grok: "border-pink-500/50 bg-pink-500/10"
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    setDraggedItem(itemId);
+    e.dataTransfer.effectAllowed = "move";
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (!canvasRef.current) return;
-
-    const rect = canvasRef.current.getBoundingClientRect();
+  const handleDragEnd = (e: React.DragEvent, itemId: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    
+    setItems(prev => prev.map(item => 
+      item.id === itemId 
+        ? { ...item, x: Math.max(0, x - item.width/2), y: Math.max(0, y - item.height/2) }
+        : item
+    ));
+    setDraggedItem(null);
+  };
 
-    // Simulate dropping a message from chat
-    const newElement: CanvasElement = {
-      id: `element-${Date.now()}`,
-      type: "message",
-      content: "Sample AI response that was dragged here...",
-      agent: "mistral",
-      position: { x, y },
-      timestamp: new Date(),
-      version: 1
+  const addItem = (type: CanvasItem["type"]) => {
+    const newItem: CanvasItem = {
+      id: Date.now().toString(),
+      x: 100 + Math.random() * 200,
+      y: 100 + Math.random() * 200,
+      width: type === "code" ? 250 : 200,
+      height: type === "note" ? 120 : 100,
+      type,
+      content: type === "note" ? "New note..." : type === "code" ? "// New code snippet" : "New item",
+      color: ["teal", "purple", "blue", "pink"][Math.floor(Math.random() * 4)]
     };
-
-    setElements(prev => [...prev, newElement]);
-  };
-
-  const handleElementDrag = (elementId: string, newPosition: { x: number; y: number }) => {
-    setElements(prev => 
-      prev.map(el => 
-        el.id === elementId 
-          ? { ...el, position: newPosition }
-          : el
-      )
-    );
-  };
-
-  const removeElement = (elementId: string) => {
-    setElements(prev => prev.filter(el => el.id !== elementId));
-  };
-
-  const forkElement = (elementId: string) => {
-    const element = elements.find(el => el.id === elementId);
-    if (!element) return;
-
-    const forkedElement: CanvasElement = {
-      ...element,
-      id: `${element.id}-fork-${Date.now()}`,
-      position: { 
-        x: element.position.x + 20, 
-        y: element.position.y + 20 
-      },
-      version: element.version + 1,
-      timestamp: new Date()
-    };
-
-    setElements(prev => [...prev, forkedElement]);
+    setItems(prev => [...prev, newItem]);
   };
 
   return (
-    <div className={cn("relative h-full w-full overflow-hidden", className)}>
-      {/* Timeline Control */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
-        <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 flex items-center gap-3">
-          <Clock size={14} className="text-white/50" />
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={timelinePosition}
-            onChange={(e) => setTimelinePosition(Number(e.target.value))}
-            className="w-32 h-1 bg-white/20 rounded-full appearance-none cursor-pointer"
-          />
-          <span className="text-xs text-white/50 font-mono">
-            {timelinePosition}%
-          </span>
+    <div className={`relative w-full h-full overflow-hidden ${className}`}>
+      {/* Canvas Header */}
+      <div className="absolute top-0 left-0 right-0 z-20 p-4 bg-black/20 backdrop-blur-sm border-b border-white/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Layers size={16} className="text-teal-400" />
+            <span className="text-sm font-bold text-white/80">BLACKBOARD</span>
+            <span className="text-xs text-white/40">({items.length} items)</span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => addItem("note")}
+              className="p-1.5 rounded bg-teal-500/20 hover:bg-teal-500/30 text-teal-400 transition-colors"
+              title="Add Note"
+            >
+              <Plus size={14} />
+            </button>
+            <button
+              onClick={() => addItem("code")}
+              className="p-1.5 rounded bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 transition-colors"
+              title="Add Code"
+            >
+              <Plus size={14} />
+            </button>
+            <button className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 transition-colors">
+              <Save size={14} />
+            </button>
+            <button className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 transition-colors">
+              <Share size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Canvas Grid Background */}
-      <div 
-        className="absolute inset-0 opacity-10"
-        style={{ 
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)', 
-          backgroundSize: '30px 30px' 
-        }} 
-      />
-
-      {/* Drop Zone */}
-      <div
-        ref={canvasRef}
-        className="relative w-full h-full"
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-      >
-        {/* Canvas Elements */}
-        <AnimatePresence>
-          {elements.map((element) => (
-            <motion.div
-              key={element.id}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
-                opacity: timelinePosition >= (element.version * 20) ? 1 : 0.3,
-                scale: 1 
-              }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              drag
-              dragMomentum={false}
-              onDragEnd={(_, info) => {
-                const newX = Math.max(0, element.position.x + info.offset.x);
-                const newY = Math.max(0, element.position.y + info.offset.y);
-                handleElementDrag(element.id, { x: newX, y: newY });
-              }}
-              className={cn(
-                "absolute cursor-move group",
-                "w-64 min-h-[80px] p-3 rounded-lg border backdrop-blur-sm",
-                element.agent ? agentColors[element.agent] : "border-white/20 bg-white/5"
-              )}
-              style={{
-                left: element.position.x,
-                top: element.position.y
-              }}
-            >
-              {/* Element Header */}
-              <div className="flex items-center justify-between mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-2">
-                  {element.agent && (
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      element.agent === "minimax" && "bg-purple-500",
-                      element.agent === "mistral" && "bg-teal-500",
-                      element.agent === "gpt4o" && "bg-blue-500",
-                      element.agent === "grok" && "bg-pink-500"
-                    )} />
-                  )}
-                  <span className="text-xs text-white/60 capitalize">
-                    {element.agent || element.type}
-                  </span>
-                  <span className="text-xs text-white/40">
-                    v{element.version}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => forkElement(element.id)}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
-                  >
-                    <GitBranch size={12} className="text-white/50" />
-                  </button>
-                  <button
-                    onClick={() => removeElement(element.id)}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
-                  >
-                    <X size={12} className="text-white/50" />
-                  </button>
-                </div>
+      {/* Canvas Grid */}
+      <div className="absolute inset-0 pt-16">
+        {/* Grid Background */}
+        <div 
+          className="w-full h-full opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px'
+          }}
+        />
+        
+        {/* Canvas Items */}
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="absolute group cursor-move"
+            style={{
+              left: item.x,
+              top: item.y,
+              width: item.width,
+              height: item.height
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, item.id)}
+            onDragEnd={(e) => handleDragEnd(e, item.id)}
+          >
+            <GlassPanel className="w-full h-full p-3 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-2">
+                <div className={`w-2 h-2 rounded-full bg-${item.color}-400`} />
+                <Move size={12} className="text-white/40 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-
-              {/* Element Content */}
-              <div className="text-sm text-white/80 leading-relaxed">
-                {element.content}
+              
+              <div className="text-xs text-white/80 leading-relaxed">
+                {item.content}
               </div>
-
-              {/* Element Footer */}
-              <div className="mt-2 pt-2 border-t border-white/10 flex items-center justify-between text-xs text-white/40">
-                <span>{element.timestamp.toLocaleTimeString()}</span>
-                <div className="flex items-center gap-1">
-                  <Layers size={10} />
-                  <span>{element.version}</span>
-                </div>
+              
+              {/* Type indicator */}
+              <div className="absolute bottom-1 right-1 text-[10px] text-white/30">
+                {item.type.toUpperCase()}
               </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {/* Drop Zone Indicator */}
-        {elements.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-white/20">
-              <div className="text-6xl mb-4">⚓</div>
-              <p className="text-lg font-light tracking-widest">THE BLACK BOARD</p>
-              <p className="text-sm mt-2">Drag messages here to create your workspace</p>
-            </div>
+            </GlassPanel>
           </div>
-        )}
+        ))}
+      </div>
+
+      {/* Canvas Controls */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+        <div className="flex items-center gap-2 p-2 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10">
+          <span className="text-xs text-white/60">Zoom:</span>
+          <input
+            type="range"
+            min="50"
+            max="200"
+            defaultValue="100"
+            className="w-20 accent-teal-400"
+          />
+          <span className="text-xs text-white/60">100%</span>
+        </div>
       </div>
     </div>
   );
